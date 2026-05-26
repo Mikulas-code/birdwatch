@@ -1,0 +1,23 @@
+{
+  "name": "birdwatch",
+  "version": "1.0.0",
+  "description": "diary for birdwatching",
+  "keywords": [
+    "birdwatching"
+  ],
+  "homepage": "https://github.com/Mikulas-code/birdwatch#readme",
+  "bugs": {
+    "url": "https://github.com/Mikulas-code/birdwatch/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mikulas-code/birdwatch.git"
+  },
+  "license": "ISC",
+  "author": "Mikulas Bilek",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "dev"
+  }
+}
