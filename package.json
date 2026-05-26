@@ -15,9 +15,18 @@
   },
   "license": "ISC",
   "author": "Mikulas Bilek",
-  "type": "commonjs",
+  "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "dev"
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.17.3",
+    "drizzle-orm": "^0.45.2",
+    "hono": "^4.12.23"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.31.10"
   }
 }
