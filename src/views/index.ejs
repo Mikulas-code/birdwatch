@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <title>BirdWatch</title>
+</head>
+
+<body>
+    <h1>
+        <%= title %>
+    </h1>
+    <% for (const bird of birds) { %>
+        <div style="border:1px solid black;">
+            <h2>
+                <%= bird.name %>
+            </h2>
+            <p>
+                <%= bird.latinName %>
+            </p>
+
+            <table border="1" cellpadding="6" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Řád</th>
+                        <th>Čeleď</th>
+                        <th>Datum</th>
+                        <th>Pohlaví</th>
+                        <th>Počet</th>
+                        <th>Stav</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <%= bird.order %>
+                        </td>
+                        <td>
+                            <%= bird.family %>
+                        </td>
+                        <td>
+                            <%= bird.date %>
+                        </td>
+                        <td>
+                            <% if (bird.gender===true) { %>
+                                Samec
+                                <% } else { %>
+                                    Samice
+                                    <% } %>
+                        </td>
+                        <td>
+                            <%= bird.count %>
+                        </td>
+                        <td>
+                            <% if (bird.seen) { %>
+                                <strong>&#10003; Spatřen</strong>
+                                <% } else { %>
+                                    <em>&#8230; Nespatřen</em>
+                                    <% } %>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <button>Detail</button>
+            <button>Smazat</button>
+            <button>Změnit stav</button>
+        </div>
+        <% } %>
+
+</html>
