@@ -11,52 +11,52 @@
     <h1>
         <%= title %>
     </h1>
-        <fieldset>
-      <legend><strong>Přidat nového ptáka</strong></legend>
-      <form method="post" action="/add-bird">
-        <label>Název ptáka:</label>
-        <br />
-        <input name="name" size="40" placeholder="např.: Sýkora Koňadra" />
-        <br />
-        <label>Latinský název:</label>
-        <br />
-        <input name="latinName" size="40" placeholder="např.: Parus major" />
-        <br />
-        <label>Řád:</label>
-        <br />
-        <input name="order" size="40" placeholder="např.: Pěvci" />
-        <br />
-        <label>Čeleď:</label>
-        <br />
-        <input name="family" size="40" placeholder="např.: Sýkorovití" />
-        <br />
-        <label>Datum:</label>
-        <br />
-        <input type="date" name="date" />
-        <br />
-        <label>Počet:</label>
-        <br />
-        <input name="count" size="40"/>
-        <br />
-        <label>Poznámky:</label>
-        <br />
-        <input name="notes" size="40"/>
-        <br />
-        <label>Stav:</label>
-        <br />
-        <select name="seen">
-          <option value=true>Spatřen</option>
-          <option value=false>Nespatřen</option>
-        </select>
-        <br />
-        <label>Pohlaví:</label>
-        <br/>
-        <select name="gender">
-          <option value=true>Samec</option>
-          <option value=false>Samice</option>
-        </select>
-        <button type="submit">&#43; Přidat</button>
-      </form>
+    <fieldset>
+        <legend><strong>Přidat nového ptáka</strong></legend>
+        <form method="post" action="/add-bird">
+            <label>Název ptáka:</label>
+            <br />
+            <input name="name" size="40" placeholder="např.: Sýkora Koňadra" />
+            <br />
+            <label>Latinský název:</label>
+            <br />
+            <input name="latinName" size="40" placeholder="např.: Parus major" />
+            <br />
+            <label>Řád:</label>
+            <br />
+            <input name="order" size="40" placeholder="např.: Pěvci" />
+            <br />
+            <label>Čeleď:</label>
+            <br />
+            <input name="family" size="40" placeholder="např.: Sýkorovití" />
+            <br />
+            <label>Datum:</label>
+            <br />
+            <input type="date" name="date" />
+            <br />
+            <label>Počet:</label>
+            <br />
+            <input name="count" size="40" />
+            <br />
+            <label>Poznámky:</label>
+            <br />
+            <input name="notes" size="40" />
+            <br />
+            <label>Stav:</label>
+            <br />
+            <select name="seen">
+                <option value=true>Spatřen</option>
+                <option value=false>Nespatřen</option>
+            </select>
+            <br />
+            <label>Pohlaví:</label>
+            <br />
+            <select name="gender">
+                <option value=true>Samec</option>
+                <option value=false>Samice</option>
+            </select>
+            <button type="submit">&#43; Přidat</button>
+        </form>
     </fieldset>
 
 
@@ -114,8 +114,13 @@
                 </tbody>
             </table>
             <button>Detail</button>
-            <button>Smazat</button>
-            <button>Změnit stav</button>
+            <form method="post" action="/remove-bird/<%= bird.id %>">
+                <button type="submit">Smazat</button>
+            </form>
+            <form method="post" action="/toggle-bird/<%= bird.id %>">
+                <button>Změnit stav</button>
+            </form>
         </div>
         <% } %>
+
 </html>

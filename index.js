@@ -3,6 +3,7 @@ import { serve } from "@hono/node-server";
 import ejs from "ejs";
 import { drizzle } from "drizzle-orm/libsql"
 import { birdsTable } from "./src/schema.js";
+import { eq } from "drizzle-orm"
 
 const db = drizzle({
   connection: "file:db.sqlite",
@@ -13,6 +14,7 @@ const app = new Hono();
 
 
 //endpoints
+// Homepage
 app.get("/", async (c) => {
   const birds = await db.select().from(birdsTable).all();
   const index = await ejs.renderFile("src/views/index.ejs", {
@@ -27,6 +29,8 @@ serve(app, (info) => {
   console.log(`Server listening at http://localhost:${info.port}`);
 });
 
+
+// pridavani ptaku
 app.post('/add-bird', async (c) => {
   const body = await c.req.formData();
   const name = body.get('name');
@@ -55,4 +59,23 @@ app.post('/add-bird', async (c) => {
   })
 
   return c.redirect('/')
+})
+
+// mazani ptaku
+app.post('/remove-bird/:id', async (c) => {
+  const id = Number(c.req.param('id'));
+
+  await db.delete(birdsTable).where(eq(birdsTable.id, id));
+
+  return c.redirect('/');
+})
+// zmena stavu
+app.post('/toggle-bird/:id', async (c) => {
+  const id = Number(c.req.param('id'));
+
+  const bird = await db.select().from(birdsTable).where(eq(birdsTable.id, id)).get();
+
+  await db.update(birdsTable).set({ seen: !bird.seen }).where(eq(birdsTable.id, id));
+
+  return c.redirect('/');
 })
