@@ -1,129 +1,171 @@
 <!DOCTYPE html>
 <html lang='en'>
 
-<head>
-    <meta charset='utf-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <title>BirdWatch</title>
-</head>
+<%- include('partials/head') %>
 
-<body>
-    <h1>
-        <%= title %>
-    </h1>
-    <fieldset>
-        <legend><strong>Přidat nového ptáka</strong></legend>
-        <form method="post" action="/add-bird">
-            <label>Název ptáka:</label>
-            <br />
-            <input name="name" size="40" placeholder="např.: Sýkora Koňadra" />
-            <br />
-            <label>Latinský název:</label>
-            <br />
-            <input name="latinName" size="40" placeholder="např.: Parus major" />
-            <br />
-            <label>Řád:</label>
-            <br />
-            <input name="order" size="40" placeholder="např.: Pěvci" />
-            <br />
-            <label>Čeleď:</label>
-            <br />
-            <input name="family" size="40" placeholder="např.: Sýkorovití" />
-            <br />
-            <label>Datum:</label>
-            <br />
-            <input type="date" name="date" />
-            <br />
-            <label>Počet:</label>
-            <br />
-            <input name="count" size="40" />
-            <br />
-            <label>Poznámky:</label>
-            <br />
-            <input name="notes" size="40" />
-            <br />
-            <label>Stav:</label>
-            <br />
-            <select name="seen">
-                <option value=true>Spatřen</option>
-                <option value=false>Nespatřen</option>
-            </select>
-            <br />
-            <label>Pohlaví:</label>
-            <br />
-            <select name="gender">
-                <option value=true>Samec</option>
-                <option value=false>Samice</option>
-            </select>
-            <button type="submit">&#43; Přidat</button>
-        </form>
-    </fieldset>
+    <body class="bg-gray-100 min-h-screen">
+        <nav class="bg-green-700 text-white px-6 py-4 mb-8">
+            <h1 class="text-2xl font-bold">🦅 BirdWatch</h1>
+        </nav>
+        <main class="max-w-2xl mx-auto px-4">
+            <details class="bg-white rounded-lg shadow p-4 mb-6">
+                <summary class="cursor-pointer font-semibold text-green-700">
+                    + Přidat nového ptáka
+                </summary>
+                <div class="mt-4">
+
+                    <legend><strong>Přidat nového ptáka</strong></legend>
+                    <form method="post" action="/add-bird" class="mt-4 flex flex-col gap-3">
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Název ptáka</label>
+                            <input name="name" placeholder="např.: Sýkora Koňadra"
+                                class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Latinský název</label>
+                            <input name="latinName" placeholder="např.: Parus major"
+                                class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
+                        </div>
+
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Řád</label>
+                            <input name="order" size="40" placeholder="např.: Pěvci"
+                                class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
+                        </div>
+
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Čeleď</label>
+                            <input name="family" size="40" placeholder="např.: Sýkorovití"
+                                class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
+                        </div>
+
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Datum</label>
+                            <input type="date" name="date"
+                                class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
+                        </div>
+
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Počet</label>
+                            <input name="count" size="40"
+                                class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
+                        </div>
+
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Poznámky</label>
+                            <input name="notes" size="40"
+                                class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
+                        </div>
+
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Stav</label>
+                            <br />
+                            <select name="seen" class="w-32 border border-gray-300 rounded px-3 py-2 mt-1 text-sm">
+                                <option value=true>Spatřen</option>
+                                <option value=false>Nespatřen</option>
+                            </select>
+                        </div>
 
 
-    <hr />
-    <% for (const bird of birds) { %>
-        <div style="border:1px solid black;">
-            <h2>
-                <%= bird.name %>
-            </h2>
-            <p>
-                <%= bird.latinName %>
-            </p>
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Stav</label>
+                            <br />
+                            <select name="gender" class="w-32 border border-gray-300 rounded px-3 py-2 mt-1 text-sm">
+                                <option value=true>Samec</option>
+                                <option value=false>Samice</option>
+                            </select>
+                        </div>
+
+                        <button type="submit"
+                            class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-fit">
+                            + Přidat
+                        </button>
+                    </form>
+
+                </div>
+            </details>
+
+
 
             <hr />
-            <table border="1" cellpadding="6" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th>Řád</th>
-                        <th>Čeleď</th>
-                        <th>Datum</th>
-                        <th>Pohlaví</th>
-                        <th>Počet</th>
-                        <th>Stav</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <%= bird.order %>
-                        </td>
-                        <td>
-                            <%= bird.family %>
-                        </td>
-                        <td>
-                            <%= bird.date %>
-                        </td>
-                        <td>
-                            <% if (bird.gender===true) { %>
-                                Samec
-                                <% } else { %>
-                                    Samice
-                                    <% } %>
-                        </td>
-                        <td>
-                            <%= bird.count %>
-                        </td>
-                        <td>
-                            <% if (bird.seen) { %>
-                                <strong>&#10003; Spatřen</strong>
-                                <% } else { %>
-                                    <em>&#8230; Nespatřen</em>
-                                    <% } %>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <form method="get" action="/open-edit/<%= bird.id %>" >
-                <button>Detail</button>
-            </form>
+            <% for (const bird of birds) { %>
+                <div class="bg-white rounded-lg shadow p-4 mb-8 border border-gray-200">
+                    <h2>
+                        <b>
+                            <%= bird.name %>
+                        </b>
+                    </h2>
+                    <p>
+                        <%= bird.latinName %>
+                    </p>
 
-            <form method="post" action="/remove-bird/<%= bird.id %>">
-                <button type="submit">Smazat</button>
-            </form>
-            <form method="post" action="/toggle-bird/<%= bird.id %>">
-                <button>Změnit stav</button>
-            </form>
-        </div>
-        <% } %>
+                    <hr />
+                    <table class="w-full text-sm mt-2">
+                        <thead class="bg-gray-50 text-gray-600">
+                            <tr>
+                                <th class="text-left p-2">Řád</th>
+                                <th class="text-left p-2">Čeleď</th>
+                                <th class="text-left p-2">Datum</th>
+                                <th class="text-left p-2">Pohlaví</th>
+                                <th class="text-left p-2">Počet</th>
+                                <th class="text-left p-2">Stav</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-t">
+                                <td class="p-2">
+                                    <%= bird.order %>
+                                </td>
+                                <td class="p-2">
+                                    <%= bird.family %>
+                                </td>
+                                <td class="p-2">
+                                    <%= bird.date %>
+                                </td>
+                                <td class="p-2">
+                                    <% if (bird.gender===true) { %>
+                                        Samec
+                                        <% } else { %>
+                                            Samice
+                                            <% } %>
+                                </td>
+                                <td class="p-2">
+                                    <%= bird.count %>
+                                </td>
+                                <td class="p-2">
+                                    <% if (bird.seen) { %>
+                                        <strong>&#10003; Spatřen</strong>
+                                        <% } else { %>
+                                            <em>&#8230; Nespatřen</em>
+                                            <% } %>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="flex gap-2 mt-2">
+                        <a href="/open-edit/<%= bird.id %>"
+                            class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
+                            Detail
+                        </a>
+
+                        <form method="post" action="/remove-bird/<%= bird.id %>" class="inline">
+                            <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded">
+                                Odstranit
+                            </button>
+                        </form>
+                        <form method="post" action="/toggle-bird/<%= bird.id %>" class="inline">
+                            <button type="submit" class="bg-gray-500 text-white px-3 py-1 rounded">
+                                Změnit stav
+                            </button>
+                        </form>
+                    </div>
+
+
+                </div>
+                <% } %>
+
+        </main>
+    </body>
 
 </html>
