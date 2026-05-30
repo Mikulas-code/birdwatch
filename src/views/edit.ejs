@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <title>
+        <%=title%>
+    </title>
+</head>
+
+<body>
+    <form method="post" action="/save-changes/<%= bird.id %>">
+        <label>Název ptáka:</label>
+        <br />
+        <input name="name" size="40" placeholder="např.: Sýkora Koňadra" value="<%=bird.name %>" />
+        <br />
+        <label>Latinský název:</label>
+        <br />
+        <input name="latinName" size="40" placeholder="např.: Parus major" value="<%=bird.latinName %>" />
+        <br />
+        <label>Řád:</label>
+        <br />
+        <input name="order" size="40" placeholder="např.: Pěvci" value="<%=bird.order %>" />
+        <br />
+        <label>Čeleď:</label>
+        <br />
+        <input name="family" size="40" placeholder="např.: Sýkorovití" value="<%=bird.family %>" />
+        <br />
+        <label>Datum:</label>
+        <br />
+        <input type="date" name="date" value="<%=bird.date %>" />
+        <br />
+        <label>Počet:</label>
+        <br />
+        <input name="count" size="40" value="<%=bird.count %>" />
+        <br />
+        <label>Poznámky:</label>
+        <br />
+        <input name="notes" size="40" value="<%= bird.notes %>" />
+        <br />
+        <label>Stav:</label>
+        <br />
+        <select name="seen">
+            <option value="true" <%=bird.seen ? 'selected' : '' %>>Spatřen</option>
+            <option value="false" <%=!bird.seen ? 'selected' : '' %>>Nespatřen</option>
+        </select>
+        <br />
+        <label>Pohlaví:</label>
+        <br />
+        <select name="gender">
+            <option value="true" <%=bird.gender ? 'selected' : '' %>>Samec</option>
+            <option value="false" <%=!bird.gender ? 'selected' : '' %>>Samice</option>
+        </select>
+        <button type="submit">&#43; Uložit</button>
+    </form>
+</body>
+
+</html>

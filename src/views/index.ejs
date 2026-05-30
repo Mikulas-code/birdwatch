@@ -113,7 +113,10 @@
                     </tr>
                 </tbody>
             </table>
-            <button>Detail</button>
+            <form method="get" action="/open-edit/<%= bird.id %>" >
+                <button>Detail</button>
+            </form>
+
             <form method="post" action="/remove-bird/<%= bird.id %>">
                 <button type="submit">Smazat</button>
             </form>
