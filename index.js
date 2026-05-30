@@ -153,3 +153,19 @@ app.post("/save-changes/:id", async (c) => {
 
   return c.redirect("/");
 });
+
+
+app.get("/register", async (c) => {
+  const birds = await db.select().from(birdsTable).all();
+ 
+  const register = await ejs.renderFile(
+    "src/views/register.ejs",
+    {
+      title: "Birds",
+      birds,
+    },
+    { views: ["src/views"] },
+  );
+
+  return c.html(register);
+});

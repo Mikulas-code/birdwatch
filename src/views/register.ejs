@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<%- include('partials/head') %>
+
+    <body class="bg-gray-100 min-h-screen">
+        <main class="max-w-2xl mx-auto px-8 py-4">
+            <div class="bg-white rounded-lg shadow p-4 mb-8 border border-gray-200">
+                <form method="post" action="/create-user" class="inline">
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">E-mail</label>
+                        <input name="userName"
+                            class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
+                    </div>
+
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Heslo</label>
+                        <input name="passWord"
+                            class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
+                    </div>
+
+
+                </form>
+            </div>
+
+        </main>
+    </body>
+
+</html>
