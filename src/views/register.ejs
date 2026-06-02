@@ -16,22 +16,19 @@
 
                     <div>
                         <label class="text-sm font-medium text-gray-700">Heslo</label>
-                        <input name="passWord" class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
+                        <input type="password" name="passWord" class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
                     </div>
 
                     <div>
                         <label class="text-sm font-medium text-gray-700">Heslo znovu</label>
-                        <input name="passWord" class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
+                        <input type="password" name="passWordConfirm" class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
                     </div>
 
                     <div class="flex gap-2 mt-2">
-                        <form method="post" action="/toggle-bird/" class="inline">
                             <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded">
                                 Zaregistrovat se
                             </button>
-                        </form>
-
-
+                    
                         <a href="/login"
                             class="bg-gray-500 text-white px-3 py-1 rounded hover:bg-blue-600">
                             Už mám účet

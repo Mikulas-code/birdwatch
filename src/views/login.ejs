@@ -6,7 +6,7 @@
     <body class="bg-gray-100 min-h-screen">
         <main class="max-w-2xl mx-auto px-8 py-4">
             <div class="bg-white rounded-lg shadow p-4 mb-8 border border-gray-200">
-                <form method="post" action="/create-user" class="inline">
+                <form method="post" action="/login-user" class="inline">
                     <h1><b>Přihlášení</b></h1>
                     </br>
                     <div>
@@ -16,15 +16,13 @@
 
                     <div>
                         <label class="text-sm font-medium text-gray-700">Heslo</label>
-                        <input name="passWord" class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
+                        <input type="password" name="passWord" class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
                     </div>
 
                     <div class="flex gap-2 mt-2">
-                        <form method="post" action="/toggle-bird/" class="inline">
                             <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded">
                                 Přihlásit se
                             </button>
-                        </form>
 
 
                         <a href="/register"
