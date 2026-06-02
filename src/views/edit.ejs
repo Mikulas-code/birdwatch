@@ -3,75 +3,83 @@
 
 <%- include('partials/head') %>
 
-<body class="bg-gray-100 min-h-screen">
-  <nav class="bg-green-700 text-white px-6 py-4 mb-8">
-    <h1 class="text-2xl font-bold">🦅 BirdWatch</h1>
-  </nav>
+  <body class="bg-gray-100 min-h-screen">
+    <nav class="bg-green-700 text-white px-6 py-4 mb-8">
+      <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold">🦅 BirdWatch</h1>
+        <% if (user) { %>
+          <a href="/profile" class="text-white">
+            <%= user.userName %>
+          </a>
+          <% } else { %>
+            <a href="/login" class="text-white">Přihlásit se</a>
+            <% } %>
+      </div>
+    </nav>
 
-  <main class="max-w-2xl mx-auto px-8 py-4">
-    <h2 class="text-xl font-bold mb-4">Upravit ptáka</h2>
-    
-    <form method="post" action="/save-changes/<%= bird.id %>" class="flex flex-col gap-3">
-      <div>
-        <label class="text-sm font-medium text-gray-700">Název ptáka</label>
-        <input name="name" value="<%= bird.name %>"
-               class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm"/>
-      </div>
-      <div>
-        <label class="text-sm font-medium text-gray-700">Latinský název</label>
-        <input name="latinName" value="<%= bird.latinName %>"
-               class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm"/>
-      </div>
-      <div>
-        <label class="text-sm font-medium text-gray-700">Řád</label>
-        <input name="order" value="<%= bird.order %>"
-               class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm"/>
-      </div>
-      <div>
-        <label class="text-sm font-medium text-gray-700">Čeleď</label>
-        <input name="family" value="<%= bird.family %>"
-               class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm"/>
-      </div>
-      <div>
-        <label class="text-sm font-medium text-gray-700">Datum</label>
-        <input type="date" name="date" value="<%= bird.date %>"
-               class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm"/>
-      </div>
-      <div>
-        <label class="text-sm font-medium text-gray-700">Počet</label>
-        <input name="count" value="<%= bird.count %>"
-               class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm"/>
-      </div>
-      <div>
-        <label class="text-sm font-medium text-gray-700">Poznámky</label>
-        <input name="notes" value="<%= bird.notes %>"
-               class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm"/>
-      </div>
-      <div>
-        <label class="text-sm font-medium text-gray-700">Stav</label>
-        <select name="seen" class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm">
-          <option value="true" <%= bird.seen ? 'selected' : '' %>>Spatřen</option>
-          <option value="false" <%= !bird.seen ? 'selected' : '' %>>Nespatřen</option>
-        </select>
-      </div>
-      <div>
-        <label class="text-sm font-medium text-gray-700">Pohlaví</label>
-        <select name="gender" class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm">
-          <option value="true" <%= bird.gender ? 'selected' : '' %>>Samec</option>
-          <option value="false" <%= !bird.gender ? 'selected' : '' %>>Samice</option>
-        </select>
-      </div>
-      <div class="flex gap-2">
-        <button type="submit"
-                class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-          Uložit
-        </button>
-        <a href="/" class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">
-          Zrušit
-        </a>
-      </div>
-    </form>
-  </main>
-</body>
+    <main class="max-w-2xl mx-auto px-8 py-4">
+      <h2 class="text-xl font-bold mb-4">Upravit ptáka</h2>
+
+      <form method="post" action="/save-changes/<%= bird.id %>" class="flex flex-col gap-3">
+        <div>
+          <label class="text-sm font-medium text-gray-700">Název ptáka</label>
+          <input name="name" value="<%= bird.name %>"
+            class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
+        </div>
+        <div>
+          <label class="text-sm font-medium text-gray-700">Latinský název</label>
+          <input name="latinName" value="<%= bird.latinName %>"
+            class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
+        </div>
+        <div>
+          <label class="text-sm font-medium text-gray-700">Řád</label>
+          <input name="order" value="<%= bird.order %>"
+            class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
+        </div>
+        <div>
+          <label class="text-sm font-medium text-gray-700">Čeleď</label>
+          <input name="family" value="<%= bird.family %>"
+            class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
+        </div>
+        <div>
+          <label class="text-sm font-medium text-gray-700">Datum</label>
+          <input type="date" name="date" value="<%= bird.date %>"
+            class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
+        </div>
+        <div>
+          <label class="text-sm font-medium text-gray-700">Počet</label>
+          <input name="count" value="<%= bird.count %>"
+            class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
+        </div>
+        <div>
+          <label class="text-sm font-medium text-gray-700">Poznámky</label>
+          <input name="notes" value="<%= bird.notes %>"
+            class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
+        </div>
+        <div>
+          <label class="text-sm font-medium text-gray-700">Stav</label>
+          <select name="seen" class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm">
+            <option value="true" <%=bird.seen ? 'selected' : '' %>>Spatřen</option>
+            <option value="false" <%=!bird.seen ? 'selected' : '' %>>Nespatřen</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-sm font-medium text-gray-700">Pohlaví</label>
+          <select name="gender" class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm">
+            <option value="true" <%=bird.gender ? 'selected' : '' %>>Samec</option>
+            <option value="false" <%=!bird.gender ? 'selected' : '' %>>Samice</option>
+          </select>
+        </div>
+        <div class="flex gap-2">
+          <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+            Uložit
+          </button>
+          <a href="/" class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">
+            Zrušit
+          </a>
+        </div>
+      </form>
+    </main>
+  </body>
 
 </html>

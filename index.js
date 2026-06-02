@@ -27,8 +27,16 @@ app.use(async (c, next) => {
   await next();
 });
 
+const auth = async (c, next) => {
+  const user = c.get("user")
+  if (!user) {
+    return c.redirect("/login")
+  }
+  await next()
+}
+
 // Homepage
-app.get("/", async (c) => {
+app.get("/", auth, async (c) => {
   const birds = await getAllBirds();
   const user = c.get("user");
   const index = await ejs.renderFile(
@@ -44,7 +52,7 @@ serve(app, (info) => {
 });
 
 // pridavani ptaku
-app.post("/add-bird", async (c) => {
+app.post("/add-bird", auth, async (c) => {
   const body = await c.req.formData();
   await addBird({
     name: body.get("name"),
@@ -64,33 +72,34 @@ app.post("/add-bird", async (c) => {
 });
 
 // mazani ptaku
-app.post("/remove-bird/:id", async (c) => {
+app.post("/remove-bird/:id", auth, async (c) => {
   const id = Number(c.req.param("id"));
   await deleteBird(id);
   return c.redirect("/");
 });
 
 // zmena stavu
-app.post("/toggle-bird/:id", async (c) => {
+app.post("/toggle-bird/:id", auth, async (c) => {
   const id = Number(c.req.param("id"));
   await toggleBird(id);
   return c.redirect("/");
 });
 
 // open edit
-app.get("/open-edit/:id", async (c) => {
+app.get("/open-edit/:id", auth, async (c) => {
   const id = Number(c.req.param("id"));
+  const user = c.get("user");
   const bird = await getBirdById(id);
   const edit = await ejs.renderFile(
     "src/views/edit.ejs",
-    { title: "Edit " + bird.name, bird },
+    { title: "Edit " + bird.name, bird, user },
     { views: ["src/views"] },
   );
   return c.html(edit);
 });
 
 // save changes
-app.post("/save-changes/:id", async (c) => {
+app.post("/save-changes/:id", auth ,async (c) => {
   const body = await c.req.formData();
   const id = Number(c.req.param("id"));
   await updateBird(id, {
@@ -159,3 +168,8 @@ app.post("/login-user", async (c) => {
   setCookie(c, "token", token);
   return c.redirect("/");
 });
+
+app.get("/logout", async (c) => {
+  setCookie(c, "token", "")
+  return c.redirect("/login")
+})
