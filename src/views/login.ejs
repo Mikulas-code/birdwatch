@@ -6,6 +6,9 @@
     <body class="bg-gray-100 min-h-screen">
         <main class="max-w-2xl mx-auto px-8 py-4">
             <div class="bg-white rounded-lg shadow p-4 mb-8 border border-gray-200">
+                <% if (error==="wrongpassword" ) { %>
+                    <p class="text-red-500">Špatné heslo nebo přihlašovací jméno</p>
+                    <% } %>
                 <form method="post" action="/login-user" class="inline">
                     <h1><b>Přihlášení</b></h1>
                     </br>

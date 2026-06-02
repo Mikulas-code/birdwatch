@@ -56,3 +56,26 @@ export const createUser = async (name, password) => {
 
   await db.insert(usersTable).values({ userName: name, salt, hash, token })
 }
+
+export async function getUserByName(userName) {
+  return await db.select().from(usersTable).where(eq(usersTable.userName, userName)).get()
+}
+
+export async function getUserByToken(token) {
+  return await db.select().from(usersTable).where(eq(usersTable.token, token)).get()
+}
+
+export const authenticateUser = async (name, passWord) =>{
+  const user = await getUserByName(name);
+  if (!user) return false;
+
+  const salt = user.salt;
+  const hash = crypto.pbkdf2Sync(passWord, salt, 100000, 64, 'sha512').toString('hex');
+
+  if(hash === user.hash){
+    return user.token;
+  }
+  return false;
+
+
+}

@@ -3,13 +3,17 @@ import { serve } from "@hono/node-server";
 import ejs from "ejs";
 import {
   addBird,
+  authenticateUser,
   createUser,
   deleteBird,
   getAllBirds,
   getBirdById,
+  getUserByToken,
   toggleBird,
   updateBird,
 } from "./src/db.js";
+
+import { getCookie, setCookie } from "hono/cookie";
 
 import { drizzle } from "drizzle-orm/libsql";
 import { eq } from "drizzle-orm";
@@ -17,12 +21,19 @@ import { birdsTable } from "./src/schema.js";
 import { error } from "node:console";
 const app = new Hono();
 
+app.use(async (c, next) => {
+  const token = getCookie(c, "token");
+  c.set("user", token ? await getUserByToken(token) : null);
+  await next();
+});
+
 // Homepage
 app.get("/", async (c) => {
   const birds = await getAllBirds();
+  const user = c.get("user");
   const index = await ejs.renderFile(
     "src/views/index.ejs",
-    { title: "Birds", birds },
+    { title: "Birds", birds, user },
     { views: ["src/views"] },
   );
   return c.html(index);
@@ -101,19 +112,20 @@ app.post("/save-changes/:id", async (c) => {
 
 // uzivatele
 app.get("/register", async (c) => {
-  const error = c.req.query("error")
+  const error = c.req.query("error");
   const register = await ejs.renderFile(
     "src/views/register.ejs",
-    {error},
+    { error },
     { views: ["src/views"] },
   );
   return c.html(register);
 });
 
 app.get("/login", async (c) => {
+  const error = c.req.query("error");
   const login = await ejs.renderFile(
     "src/views/login.ejs",
-    {},
+    { error },
     { views: ["src/views"] },
   );
   return c.html(login);
@@ -131,5 +143,19 @@ app.post("/create-user", async (c) => {
   }
   createUser(userName, password);
 
+  return c.redirect("/");
+});
+
+app.post("/login-user", async (c) => {
+  const body = await c.req.formData();
+  const userName = body.get("userName");
+  const password = body.get("passWord");
+
+  const token = await authenticateUser(userName, password);
+
+  if (token === false) {
+    return c.redirect("/login?error=wrongpassword");
+  }
+  setCookie(c, "token", token);
   return c.redirect("/");
 });
