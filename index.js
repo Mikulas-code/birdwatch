@@ -1,11 +1,20 @@
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
 import ejs from "ejs";
-import { addBird, deleteBird, getAllBirds, getBirdById, toggleBird, updateBird } from "./src/db.js";
+import {
+  addBird,
+  createUser,
+  deleteBird,
+  getAllBirds,
+  getBirdById,
+  toggleBird,
+  updateBird,
+} from "./src/db.js";
 
-import { drizzle } from "drizzle-orm/libsql"
-import { eq } from "drizzle-orm"
+import { drizzle } from "drizzle-orm/libsql";
+import { eq } from "drizzle-orm";
 import { birdsTable } from "./src/schema.js";
+import { error } from "node:console";
 const app = new Hono();
 
 // Homepage
@@ -36,7 +45,8 @@ app.post("/add-bird", async (c) => {
     notes: body.get("notes"),
     count: body.get("count"),
     seen: body.get("seen") === "true",
-    imageURL: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Parus_major_2_Luc_Viatour.jpg/1280px-Parus_major_2_Luc_Viatour.jpg",
+    imageURL:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Parus_major_2_Luc_Viatour.jpg/1280px-Parus_major_2_Luc_Viatour.jpg",
     userId: 1,
   });
   return c.redirect("/");
@@ -82,7 +92,8 @@ app.post("/save-changes/:id", async (c) => {
     notes: body.get("notes"),
     count: body.get("count"),
     seen: body.get("seen") === "true",
-    imageURL: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Parus_major_2_Luc_Viatour.jpg/1280px-Parus_major_2_Luc_Viatour.jpg",
+    imageURL:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Parus_major_2_Luc_Viatour.jpg/1280px-Parus_major_2_Luc_Viatour.jpg",
     userId: 1,
   });
   return c.redirect("/");
@@ -90,8 +101,10 @@ app.post("/save-changes/:id", async (c) => {
 
 // uzivatele
 app.get("/register", async (c) => {
+  const error = c.req.query("error")
   const register = await ejs.renderFile(
-    "src/views/register.ejs", {},
+    "src/views/register.ejs",
+    {error},
     { views: ["src/views"] },
   );
   return c.html(register);
@@ -99,8 +112,24 @@ app.get("/register", async (c) => {
 
 app.get("/login", async (c) => {
   const login = await ejs.renderFile(
-    "src/views/login.ejs", {},
+    "src/views/login.ejs",
+    {},
     { views: ["src/views"] },
   );
   return c.html(login);
+});
+
+app.post("/create-user", async (c) => {
+  const body = await c.req.formData();
+  const userName = body.get("userName");
+  const password = body.get("passWord");
+
+  const passwordConfirm = body.get("passWordConfirm");
+
+  if (password !== passwordConfirm) {
+    return c.redirect("/register?error=passwords");
+  }
+  createUser(userName, password);
+
+  return c.redirect("/");
 });

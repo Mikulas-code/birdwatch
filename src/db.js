@@ -1,6 +1,8 @@
 import { drizzle } from "drizzle-orm/libsql"
 import { eq } from "drizzle-orm"
-import { birdsTable } from "./schema.js"
+import crypto from "crypto"
+import { birdsTable, usersTable } from "./schema.js"
+
 
 const db = drizzle({
   connection: "file:db.sqlite",
@@ -43,4 +45,14 @@ export async function getBirdById(id) {
 }
 export async function updateBird(id, data) {
   await db.update(birdsTable).set(data).where(eq(birdsTable.id, id))
+}
+
+
+// uzivatele
+export const createUser = async (name, password) => {
+  const salt = crypto.randomBytes(16).toString('hex')
+  const hash = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex')
+  const token = crypto.randomBytes(16).toString('hex')
+
+  await db.insert(usersTable).values({ userName: name, salt, hash, token })
 }
