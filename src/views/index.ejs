@@ -4,19 +4,8 @@
 <%- include('partials/head') %>
 
     <body class="bg-gray-100 min-h-screen">
-        <nav class="bg-green-700 text-white px-6 py-4 mb-8">
-            <div class="flex justify-between items-center">
-                <a href="/logout" class="text-white">Odhlásit se</a>
-                <h1 class="text-2xl font-bold">🦅 BirdWatch</h1>
-                <% if (user) { %>
-                    <a href="/profile" class="text-white">
-                        <%= user.userName %>
-                    </a>
-                    <% } else { %>
-                        <a href="/login" class="text-white">Přihlásit se</a>
-                        <% } %>
-            </div>
-        </nav>
+        <%- include('partials/navigation') %>
+        
         <main class="max-w-2xl mx-auto px-4">
             <details class="bg-white rounded-lg shadow p-4 mb-6">
                 <summary class="cursor-pointer font-semibold text-green-700">

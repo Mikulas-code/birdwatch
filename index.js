@@ -18,7 +18,7 @@ import { getCookie, setCookie } from "hono/cookie";
 import { drizzle } from "drizzle-orm/libsql";
 import { eq } from "drizzle-orm";
 import { birdsTable } from "./src/schema.js";
-import { error } from "node:console";
+import { error, time } from "node:console";
 const app = new Hono();
 
 app.use(async (c, next) => {
@@ -50,6 +50,18 @@ app.get("/", auth, async (c) => {
 serve(app, (info) => {
   console.log(`Server listening at http://localhost:${info.port}`);
 });
+
+app.get("/profile", auth, async (c)=>{
+  const user = c.get("user");
+  const profile = await ejs.renderFile(
+    "src/views/profile.ejs",
+    { title: "Profile", user},
+    {views: ["src/views"]},
+  );
+  return c.html(profile);
+})
+
+
 
 // pridavani ptaku
 app.post("/add-bird", auth, async (c) => {
