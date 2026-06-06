@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
 import ejs from "ejs";
+import { createNodeWebSocket } from "@hono/node-ws";
 import {
   addBird,
   authenticateUser,
@@ -27,6 +28,7 @@ import { error, time } from "node:console";
 import { serveStatic } from "@hono/node-server/serve-static";
 const app = new Hono();
 app.use("/public/*", serveStatic({ root: "./" }));
+const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({ app });
 
 app.use(async (c, next) => {
   const token = getCookie(c, "token");
@@ -54,22 +56,59 @@ app.get("/", auth, async (c) => {
   return c.html(index);
 });
 
-//comunity
-app.get("/comunity", auth, async (c) => {
+//community
+app.get("/community", auth, async (c) => {
   const user = c.get("user");
   const birds = await getAllBirdsWithUsers();
-  const comunity = await ejs.renderFile(
-    "src/views/comunity.ejs",
+  const community = await ejs.renderFile(
+    "src/views/community.ejs",
     { title: "Birds", birds, user },
     { views: ["src/views"] },
   );
-  return c.html(comunity);
+  return c.html(community);
 });
 
-
-serve(app, (info) => {
+const server = serve(app, (info) => {
   console.log(`Server listening at http://localhost:${info.port}`);
 });
+
+injectWebSocket(server);
+
+let webSockets = new Set()
+
+app.get('/ws', upgradeWebSocket((c) => ({
+  onOpen: (evt, ws) => {
+    webSockets.add(ws)
+    console.log('Nové spojení, celkem:', webSockets.size)
+  },
+  onClose: (evt, ws) => {
+    webSockets.delete(ws)
+    console.log('Spojení ukončeno')
+  },
+})))
+
+
+const sendBirdsToAllWebsockets = async () => {
+  try {
+    const birds = await getAllBirdsWithUsers()
+    const html = await ejs.renderFile(
+      'src/views/_community_birds.ejs', 
+      { birds }, 
+      { views: ['src/views'] }
+    )
+    for (const webSocket of webSockets) {
+      webSocket.send(JSON.stringify({ type: 'birds', html }))
+    }
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+
+
+
+
+
 
 app.get("/profile", auth, async (c) => {
   const user = c.get("user");
@@ -109,6 +148,7 @@ app.post("/add-bird", auth, async (c) => {
     imageURL,
     userId: c.get("user").id,
   });
+  sendBirdsToAllWebsockets()
   return c.redirect("/");
 });
 
@@ -141,23 +181,23 @@ app.get("/open-edit/:id", auth, async (c) => {
 
 // save changes
 app.post("/save-changes/:id", auth, async (c) => {
-   const body = await c.req.parseBody()
-  const id = Number(c.req.param("id"))
-  
-  const file = body["image"]
-  let imageURL = undefined
-  
+  const body = await c.req.parseBody();
+  const id = Number(c.req.param("id"));
+
+  const file = body["image"];
+  let imageURL = undefined;
+
   if (file && file.size > 0) {
-    const fileName = `${Date.now()}_${file.name}`
-    const filePath = `public/uploads/birds/${fileName}`
-    await fs.writeFile(filePath, Buffer.from(await file.arrayBuffer()))
-    imageURL = filePath
+    const fileName = `${Date.now()}_${file.name}`;
+    const filePath = `public/uploads/birds/${fileName}`;
+    await fs.writeFile(filePath, Buffer.from(await file.arrayBuffer()));
+    imageURL = filePath;
   }
   const bird = await getBirdById(id);
   if (bird.imageURL) {
     await fs.unlink(bird.imageURL).catch(() => {});
   }
-    await updateBird(id, {
+  await updateBird(id, {
     name: body["name"],
     latinName: body["latinName"],
     order: body["order"],
@@ -168,8 +208,8 @@ app.post("/save-changes/:id", auth, async (c) => {
     count: body["count"],
     seen: body["seen"] === "true",
     ...(imageURL && { imageURL }),
-  })
-  return c.redirect(`/open-edit/${id}`)
+  });
+  return c.redirect(`/open-edit/${id}`);
 });
 
 // uzivatele

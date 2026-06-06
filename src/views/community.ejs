@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<%- include('partials/head') %>
+
+    <body class="bg-gray-100 min-h-screen">
+        <%- include('partials/navigation') %>
+
+            <main class="max-w-2xl mx-auto px-4">
+                <hr />
+                <div id="birds">
+                    <%- include('_community_birds') %>
+
+                </div>
+
+
+            </main>
+            <script>
+                const ws = new WebSocket('ws://localhost:3000/ws')
+
+                ws.addEventListener('message', (message) => {
+                    const json = JSON.parse(message.data)
+                    if (json.type === 'birds') {
+                        document.getElementById('birds').innerHTML = json.html
+                    }
+                })
+            </script>
+    </body>
+
+</html>
