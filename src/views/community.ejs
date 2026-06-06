@@ -7,6 +7,8 @@
         <%- include('partials/navigation') %>
 
             <main class="max-w-2xl mx-auto px-4">
+                <input type="text" id="search" placeholder="Hledat podle názvu..."
+                    class="w-full border border-gray-300 rounded px-3 py-2 mb-4 text-sm" />
                 <hr />
                 <div id="birds">
                     <%- include('_community_birds') %>
@@ -23,6 +25,16 @@
                     if (json.type === 'birds') {
                         document.getElementById('birds').innerHTML = json.html
                     }
+                })
+            </script>
+
+            <script>
+                document.getElementById('search').addEventListener('input', (e) => {
+                    const query = e.target.value.toLowerCase()
+                    document.querySelectorAll('.bird-card').forEach((card) => {
+                        const name = card.dataset.name.toLowerCase()
+                        card.style.display = name.includes(query) ? 'block' : 'none'
+                    })
                 })
             </script>
     </body>

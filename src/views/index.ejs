@@ -113,10 +113,11 @@
                 </details>
 
 
-
+                <input type="text" id="search" placeholder="Hledat podle názvu..."
+                    class="w-full border border-gray-300 rounded px-3 py-2 mb-4 text-sm" />
                 <hr />
                 <% for (const bird of birds) { %>
-                    <div class="bg-white rounded-lg shadow p-4 mb-8 border border-gray-200">
+                    <div class="bg-white rounded-lg shadow p-4 mb-8 border border-gray-200 bird-card" data-name="<%= bird.name %>">
                         <h2>
                             <b>
                                 <%= bird.name %>
@@ -198,6 +199,16 @@
                     <% } %>
 
             </main>
+
+            <script>
+                document.getElementById('search').addEventListener('input', (e) => {
+                    const query = e.target.value.toLowerCase()
+                    document.querySelectorAll('.bird-card').forEach((card) => {
+                        const name = card.dataset.name.toLowerCase()
+                        card.style.display = name.includes(query) ? 'block' : 'none'
+                    })
+                })
+            </script>
     </body>
 
 </html>
