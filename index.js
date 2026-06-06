@@ -25,7 +25,7 @@ import { error, time } from "node:console";
 
 import { serveStatic } from "@hono/node-server/serve-static";
 const app = new Hono();
-app.use("/public/*", serveStatic({ root: "./" }))
+app.use("/public/*", serveStatic({ root: "./" }));
 
 app.use(async (c, next) => {
   const token = getCookie(c, "token");
@@ -69,20 +69,31 @@ app.get("/profile", auth, async (c) => {
 
 // pridavani ptaku
 app.post("/add-bird", auth, async (c) => {
-  const body = await c.req.formData();
+  const body = await c.req.parseBody();
+
+  const file = body["image"];
+  let imageURL = null;
+
+  if (file && file.size > 0) {
+    const fileName = `${Date.now()}_${file.name}`;
+    const filePath = `public/uploads/birds/${fileName}`;
+    const arrayBuffer = await file.arrayBuffer();
+    await fs.writeFile(filePath, Buffer.from(arrayBuffer));
+    imageURL = filePath;
+  }
+
   await addBird({
-    name: body.get("name"),
-    latinName: body.get("latinName"),
-    order: body.get("order"),
-    family: body.get("family"),
-    date: body.get("date"),
-    gender: body.get("gender") === "true",
-    notes: body.get("notes"),
-    count: body.get("count"),
-    seen: body.get("seen") === "true",
-    imageURL:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Parus_major_2_Luc_Viatour.jpg/1280px-Parus_major_2_Luc_Viatour.jpg",
-    userId: 1,
+    name: body["name"],
+    latinName: body["latinName"],
+    order: body["order"],
+    family: body["family"],
+    date: body["date"],
+    gender: body["gender"] === "true",
+    notes: body["notes"],
+    count: body["count"],
+    seen: body["seen"] === "true",
+    imageURL,
+    userId: c.get("user").id,
   });
   return c.redirect("/");
 });
@@ -116,23 +127,35 @@ app.get("/open-edit/:id", auth, async (c) => {
 
 // save changes
 app.post("/save-changes/:id", auth, async (c) => {
-  const body = await c.req.formData();
-  const id = Number(c.req.param("id"));
-  await updateBird(id, {
-    name: body.get("name"),
-    latinName: body.get("latinName"),
-    order: body.get("order"),
-    family: body.get("family"),
-    date: body.get("date"),
-    gender: body.get("gender") === "true",
-    notes: body.get("notes"),
-    count: body.get("count"),
-    seen: body.get("seen") === "true",
-    imageURL:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Parus_major_2_Luc_Viatour.jpg/1280px-Parus_major_2_Luc_Viatour.jpg",
-    userId: 1,
-  });
-  return c.redirect("/");
+   const body = await c.req.parseBody()
+  const id = Number(c.req.param("id"))
+  
+  const file = body["image"]
+  let imageURL = undefined
+  
+  if (file && file.size > 0) {
+    const fileName = `${Date.now()}_${file.name}`
+    const filePath = `public/uploads/birds/${fileName}`
+    await fs.writeFile(filePath, Buffer.from(await file.arrayBuffer()))
+    imageURL = filePath
+  }
+  const bird = await getBirdById(id);
+  if (bird.imageURL) {
+    await fs.unlink(bird.imageURL).catch(() => {});
+  }
+    await updateBird(id, {
+    name: body["name"],
+    latinName: body["latinName"],
+    order: body["order"],
+    family: body["family"],
+    date: body["date"],
+    gender: body["gender"] === "true",
+    notes: body["notes"],
+    count: body["count"],
+    seen: body["seen"] === "true",
+    ...(imageURL && { imageURL }),
+  })
+  return c.redirect(`/open-edit/${id}`)
 });
 
 // uzivatele
@@ -197,11 +220,15 @@ app.post("/upload-avatar", auth, async (c) => {
 
   // unikátní název souboru aby se nepřepisovaly
   const fileName = `${Date.now()}_${file.name}`;
-  const filePath = `public/uploads/${fileName}`;
+  const filePath = `public/uploads/avatars/${fileName}`;
 
   // převedeme File na buffer a zapíšeme na disk
   const arrayBuffer = await file.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
+
+  if (user.avatarURL) {
+    await fs.unlink(user.avatarURL).catch(() => {});
+  }
 
   await fs.writeFile(filePath, buffer);
 
