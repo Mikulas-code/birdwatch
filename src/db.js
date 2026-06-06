@@ -3,10 +3,12 @@ import { eq, and } from "drizzle-orm";
 import crypto from "crypto";
 import { birdsTable, usersTable } from "./schema.js";
 
-const db = drizzle({
-  connection: "file:db.sqlite",
-  logger: true,
-});
+const dbPath = process.env.DB_PATH || "file:db.sqlite"
+
+export const db = drizzle({
+  connection: dbPath,
+  logger: false,
+})
 
 export async function addBird(data) {
   await db.insert(birdsTable).values(data);
@@ -68,6 +70,7 @@ export const createUser = async (name, password) => {
   const token = crypto.randomBytes(16).toString("hex");
 
   await db.insert(usersTable).values({ userName: name, salt, hash, token });
+  return await getUserByName(name)
 };
 
 export async function getUserByName(userName) {

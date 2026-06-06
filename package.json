@@ -19,7 +19,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "node --watch index.js"
+    "dev": "node --watch index.js",
+    "test": "ava"
   },
   "dependencies": {
     "@hono/node-server": "^2.0.4",
@@ -32,6 +33,13 @@
     "ws": "^8.21.0"
   },
   "devDependencies": {
+    "ava": "^8.0.1",
     "drizzle-kit": "^0.31.10"
+  },
+  "ava": {
+    "timeout": "30s",
+    "environmentVariables": {
+      "DB_PATH": "file:test.sqlite"
+    }
   }
 }
