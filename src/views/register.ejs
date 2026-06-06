@@ -9,39 +9,44 @@
                 <% if (error==="passwords" ) { %>
                     <p class="text-red-500">Hesla se neshodují!</p>
                     <% } %>
-                        <form method="post" action="/create-user" class="inline">
-                            <h1><b>Registrace</b></h1>
-                            </br>
-                            <div>
-                                <label class="text-sm font-medium text-gray-700">E-mail</label>
-                                <input name="userName"
-                                    class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
-                            </div>
 
-                            <div>
-                                <label class="text-sm font-medium text-gray-700">Heslo</label>
-                                <input type="password" name="passWord"
-                                    class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
-                            </div>
+                        <% if (error==="exists" ) { %>
+                            <p class="text-red-500">Uživatel s tímto emailem již existuje!</p>
+                            <% } %>
+                                <form method="post" action="/create-user" class="inline">
+                                    <h1><b>Registrace</b></h1>
+                                    </br>
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700">E-mail</label>
+                                        <input name="userName"
+                                            class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
+                                    </div>
 
-                            <div>
-                                <label class="text-sm font-medium text-gray-700">Heslo znovu</label>
-                                <input type="password" name="passWordConfirm"
-                                    class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
-                            </div>
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700">Heslo</label>
+                                        <input type="password" name="passWord"
+                                            class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
+                                    </div>
 
-                            <div class="flex gap-2 mt-2">
-                                <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded">
-                                    Zaregistrovat se
-                                </button>
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700">Heslo znovu</label>
+                                        <input type="password" name="passWordConfirm"
+                                            class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
+                                    </div>
 
-                                <a href="/login" class="bg-gray-500 text-white px-3 py-1 rounded hover:bg-blue-600">
-                                    Už mám účet
-                                </a>
-                            </div>
+                                    <div class="flex gap-2 mt-2">
+                                        <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded">
+                                            Zaregistrovat se
+                                        </button>
+
+                                        <a href="/login"
+                                            class="bg-gray-500 text-white px-3 py-1 rounded hover:bg-blue-600">
+                                            Už mám účet
+                                        </a>
+                                    </div>
 
 
-                        </form>
+                                </form>
             </div>
 
         </main>

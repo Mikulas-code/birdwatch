@@ -13,7 +13,11 @@ export async function addBird(data) {
 }
 
 export async function getAllBirds(userId) {
-  return await db.select().from(birdsTable).where(eq(birdsTable.userId, userId)).all()
+  return await db
+    .select()
+    .from(birdsTable)
+    .where(eq(birdsTable.userId, userId))
+    .all();
 }
 
 export async function deleteBird(id) {
@@ -48,6 +52,9 @@ export async function updateBird(id, data) {
 
 // uzivatele
 export const createUser = async (name, password) => {
+  const existing = await getUserByName(name);
+  if (existing) return null; // uživatel už existuje
+
   const salt = crypto.randomBytes(16).toString("hex");
   const hash = crypto
     .pbkdf2Sync(password, salt, 100000, 64, "sha512")
@@ -99,7 +106,6 @@ export async function updateUserAvatar(userId, filePath) {
     .where(eq(usersTable.id, userId));
 }
 
-
 export async function getAllBirdsWithUsers() {
   return await db
     .select({
@@ -113,5 +119,5 @@ export async function getAllBirdsWithUsers() {
     })
     .from(birdsTable)
     .leftJoin(usersTable, eq(birdsTable.userId, usersTable.id))
-    .all()
+    .all();
 }

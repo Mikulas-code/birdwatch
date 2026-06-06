@@ -74,41 +74,37 @@ const server = serve(app, (info) => {
 
 injectWebSocket(server);
 
-let webSockets = new Set()
+let webSockets = new Set();
 
-app.get('/ws', upgradeWebSocket((c) => ({
-  onOpen: (evt, ws) => {
-    webSockets.add(ws)
-    console.log('Nové spojení, celkem:', webSockets.size)
-  },
-  onClose: (evt, ws) => {
-    webSockets.delete(ws)
-    console.log('Spojení ukončeno')
-  },
-})))
-
+app.get(
+  "/ws",
+  upgradeWebSocket((c) => ({
+    onOpen: (evt, ws) => {
+      webSockets.add(ws);
+      console.log("Nové spojení, celkem:", webSockets.size);
+    },
+    onClose: (evt, ws) => {
+      webSockets.delete(ws);
+      console.log("Spojení ukončeno");
+    },
+  })),
+);
 
 const sendBirdsToAllWebsockets = async () => {
   try {
-    const birds = await getAllBirdsWithUsers()
+    const birds = await getAllBirdsWithUsers();
     const html = await ejs.renderFile(
-      'src/views/_community_birds.ejs', 
-      { birds }, 
-      { views: ['src/views'] }
-    )
+      "src/views/_community_birds.ejs",
+      { birds },
+      { views: ["src/views"] },
+    );
     for (const webSocket of webSockets) {
-      webSocket.send(JSON.stringify({ type: 'birds', html }))
+      webSocket.send(JSON.stringify({ type: "birds", html }));
     }
   } catch (e) {
-    console.error(e)
+    console.error(e);
   }
-}
-
-
-
-
-
-
+};
 
 app.get("/profile", auth, async (c) => {
   const user = c.get("user");
@@ -150,7 +146,7 @@ app.post("/add-bird", auth, async (c) => {
     imageURL,
     userId: c.get("user").id,
   });
-  sendBirdsToAllWebsockets()
+  sendBirdsToAllWebsockets();
   return c.redirect("/");
 });
 
@@ -173,6 +169,7 @@ app.get("/open-edit/:id", auth, async (c) => {
   const id = Number(c.req.param("id"));
   const user = c.get("user");
   const bird = await getBirdById(id);
+  if (!bird) return c.notFound();
   const edit = await ejs.renderFile(
     "src/views/edit.ejs",
     { title: "Edit " + bird.name, bird, user },
@@ -245,7 +242,10 @@ app.post("/create-user", async (c) => {
   if (password !== passwordConfirm) {
     return c.redirect("/register?error=passwords");
   }
-  createUser(userName, password);
+  const result = await createUser(userName, password);
+  if (!result) {
+    return c.redirect("/register?error=exists");
+  }
 
   return c.redirect("/");
 });
@@ -291,4 +291,18 @@ app.post("/upload-avatar", auth, async (c) => {
   await updateUserAvatar(user.id, filePath);
 
   return c.redirect("/profile");
+});
+// notfound
+app.notFound(async (c) => {
+  const notFound = await ejs.renderFile(
+    "src/views/404.ejs",
+    {},
+    { views: ["src/views"] },
+  );
+  return c.html(notFound, 404);
+});
+// 500
+app.onError((err, c) => {
+  console.error(err);
+  return c.html("<h1>500 - Chyba serveru</h1>", 500);
 });
