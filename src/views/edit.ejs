@@ -11,7 +11,7 @@
 
           <!-- LEVÝ DIV - fotka -->
           <div
-            class="w-80 flex-shrink-0 self-start bg-white rounded-lg shadow border border-gray-200 p-4 flex flex-col items-center gap-3">
+            class="w-[500px] flex-shrink-0 self-start bg-white rounded-lg shadow border border-gray-200 p-4 flex flex-col items-center gap-3">
             <% if (bird.imageURL) { %>
               <img src="/<%= bird.imageURL %>" class="w-full object-cover rounded-lg"
                 onerror="this.style.display='none'" />
@@ -22,6 +22,28 @@
                 <% } %>
                   <label class="text-sm font-medium text-gray-700 w-full">Změnit fotografii</label>
                   <input type="file" name="image" accept="image/*" class="w-full text-sm" />
+
+                  <% if (bird.lat && bird.lng) { %>
+                    <div id="map" class="w-full rounded-lg mt-2" style="height: 400px;"></div>
+                    <input type="hidden" name="lat" id="lat" value="<%= bird.lat %>" />
+                    <input type="hidden" name="lng" id="lng" value="<%= bird.lng %>" />
+
+                    <script>
+                      const map = L.map('map').setView([Number('<%= bird.lat %>'), Number('<%= bird.lng %>')], 13)
+                      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
+
+                      let marker = L.marker([Number('<%= bird.lat %>'), Number('<%= bird.lng %>')]).addTo(map)
+
+                      map.on('click', (e) => {
+                        const { lat, lng } = e.latlng
+                        marker.setLatLng([lat, lng])
+                        document.getElementById('lat').value = lat
+                        document.getElementById('lng').value = lng
+                      })
+                    </script>
+                    <% } %>
+
+
           </div>
 
           <!-- PRAVÝ DIV - pole -->

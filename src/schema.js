@@ -22,5 +22,7 @@ export const birdsTable = sqliteTable("birds", {
   count: int(),
   seen: int({ mode: "boolean" }).notNull(),
   imageURL: text(),
+  lat: text(),
+  lng: text(),
   userId: int().references(() => usersTable.id),
 })

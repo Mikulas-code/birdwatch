@@ -15,6 +15,13 @@
       "when": 1780735329500,
       "tag": "0001_long_zuras",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1780745953030,
+      "tag": "0002_young_tana_nile",
+      "breakpoints": true
     }
   ]
 }

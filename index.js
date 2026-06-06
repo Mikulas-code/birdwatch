@@ -145,6 +145,8 @@ app.post("/add-bird", auth, async (c) => {
     notes: body["notes"],
     count: body["count"],
     seen: body["seen"] === "true",
+    lat: body["lat"],
+    lng: body["lng"],
     imageURL,
     userId: c.get("user").id,
   });
