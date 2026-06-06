@@ -47,47 +47,47 @@ const auth = async (c, next) => {
 
 // Homepage
 app.get("/", auth, async (c) => {
-  const user = c.get("user")
+  const user = c.get("user");
   const filters = {
     seen: c.req.query("seen"),
     family: c.req.query("family"),
     order: c.req.query("order"),
-  }
-  const birds = await getAllBirds(user.id, filters)
-  
+  };
+  const birds = await getAllBirds(user.id, filters);
+
   // pro selecty načteme všechny ptáky bez filtru
-  const allBirds = await getAllBirds(user.id, {})
-  const families = [...new Set(allBirds.map(b => b.family).filter(Boolean))]
-  const orders = [...new Set(allBirds.map(b => b.order).filter(Boolean))]
+  const allBirds = await getAllBirds(user.id, {});
+  const families = [...new Set(allBirds.map((b) => b.family).filter(Boolean))];
+  const orders = [...new Set(allBirds.map((b) => b.order).filter(Boolean))];
 
   const index = await ejs.renderFile(
     "src/views/index.ejs",
     { title: "Birds", birds, user, filters, families, orders },
     { views: ["src/views"] },
-  )
-  return c.html(index)
-})
+  );
+  return c.html(index);
+});
 //community
 app.get("/community", auth, async (c) => {
-  const user = c.get("user")
+  const user = c.get("user");
   const filters = {
     seen: c.req.query("seen"),
     family: c.req.query("family"),
     order: c.req.query("order"),
-  }
-  const birds = await getAllBirdsWithUsers(filters)
-  
-  const allBirds = await getAllBirdsWithUsers({})
-  const families = [...new Set(allBirds.map(b => b.family).filter(Boolean))]
-  const orders = [...new Set(allBirds.map(b => b.order).filter(Boolean))]
+  };
+  const birds = await getAllBirdsWithUsers(filters);
+
+  const allBirds = await getAllBirdsWithUsers({});
+  const families = [...new Set(allBirds.map((b) => b.family).filter(Boolean))];
+  const orders = [...new Set(allBirds.map((b) => b.order).filter(Boolean))];
 
   const community = await ejs.renderFile(
     "src/views/community.ejs",
     { title: "Birds", birds, user, filters, families, orders },
     { views: ["src/views"] },
-  )
-  return c.html(community)
-})
+  );
+  return c.html(community);
+});
 
 const server = serve(app, (info) => {
   console.log(`Server listening at http://localhost:${info.port}`);
@@ -144,7 +144,9 @@ app.post("/add-bird", auth, async (c) => {
   const body = await c.req.parseBody();
 
   const file = body["image"];
+  const audioFile = body["audio"];
   let imageURL = null;
+  let audioURL = null;
 
   if (file && file.size > 0) {
     const fileName = `${Date.now()}_${file.name}`;
@@ -152,6 +154,14 @@ app.post("/add-bird", auth, async (c) => {
     const arrayBuffer = await file.arrayBuffer();
     await fs.writeFile(filePath, Buffer.from(arrayBuffer));
     imageURL = filePath;
+  }
+
+  if (audioFile && audioFile.size > 0) {
+    const audioFileName = `${Date.now()}_${audioFile.name}`;
+    const audioFilePath = `public/uploads/audio/${audioFileName}`;
+    const audioArrayBuffer = await audioFile.arrayBuffer();
+    await fs.writeFile(audioFilePath, Buffer.from(audioArrayBuffer));
+    audioURL = audioFilePath;
   }
 
   await addBird({
@@ -167,6 +177,7 @@ app.post("/add-bird", auth, async (c) => {
     lat: body["lat"],
     lng: body["lng"],
     imageURL,
+    audioURL,
     userId: c.get("user").id,
   });
   sendBirdsToAllWebsockets();
@@ -207,18 +218,37 @@ app.post("/save-changes/:id", auth, async (c) => {
   const id = Number(c.req.param("id"));
 
   const file = body["image"];
-  let imageURL = undefined;
+  const audioFile = body["audio"];
+  let imageURL = null;
+  let audioURL = null;
+  const bird = await getBirdById(id);
+
+
 
   if (file && file.size > 0) {
+    // smaž starý jen když nahrávám nový
+    if (bird.imageURL) {
+      await fs.unlink(bird.imageURL).catch(() => {});
+    }
     const fileName = `${Date.now()}_${file.name}`;
     const filePath = `public/uploads/birds/${fileName}`;
     await fs.writeFile(filePath, Buffer.from(await file.arrayBuffer()));
     imageURL = filePath;
   }
-  const bird = await getBirdById(id);
-  if (bird.imageURL) {
-    await fs.unlink(bird.imageURL).catch(() => {});
+
+
+  if (audioFile && audioFile.size > 0) {
+    // smaž starý jen když nahrávám nový
+    if (bird.audioURL) {
+      await fs.unlink(bird.audioURL).catch(() => {});
+    }
+    const audioFileName = `${Date.now()}_${audioFile.name}`;
+    const audioFilePath = `public/uploads/audio/${audioFileName}`;
+    const audioArrayBuffer = await audioFile.arrayBuffer();
+    await fs.writeFile(audioFilePath, Buffer.from(audioArrayBuffer));
+    audioURL = audioFilePath;
   }
+
   await updateBird(id, {
     name: body["name"],
     latinName: body["latinName"],
@@ -230,6 +260,7 @@ app.post("/save-changes/:id", auth, async (c) => {
     count: body["count"],
     seen: body["seen"] === "true",
     ...(imageURL && { imageURL }),
+    ...(audioURL && { audioURL }),
   });
   return c.redirect(`/open-edit/${id}`);
 });
