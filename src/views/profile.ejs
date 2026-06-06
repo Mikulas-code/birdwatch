@@ -38,6 +38,66 @@
                             </button>
                         </form>
                     </details>
+
+                    <div class="bg-white rounded-lg shadow p-6 border border-gray-200 mt-4">
+                        <h2 class="text-lg font-bold mb-4">Statistiky</h2>
+
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <p class="text-gray-500 text-sm mb-1">Celkem druhů</p>
+                                <p class="text-4xl font-bold text-green-600">
+                                    <%= stats.totalBirds %>
+                                </p>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <p class="text-gray-500 text-sm mb-1">Spatřeno</p>
+                                <p class="text-4xl font-bold text-green-600">
+                                    <%= stats.seenBirds %>
+                                </p>
+                                <p class="text-gray-500 text-sm">
+                                    <%= stats.totalBirds> 0 ? Math.round((stats.seenBirds / stats.totalBirds) * 100) : 0
+                                        %> % ze všech
+                                </p>
+                            </div>
+                        </div>
+
+                        <% if (stats.mostSpotted) { %>
+                            <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                                <p class="text-gray-500 text-sm mb-1">Nejvíce spatřený pták</p>
+                                <p class="text-xl font-bold text-green-600">
+                                    <%= stats.mostSpotted.name %>
+                                </p>
+                                <p class="text-gray-500 italic text-sm">
+                                    <%= stats.mostSpotted.latinName %>
+                                </p>
+                                <p class="text-gray-400 text-sm mt-1">Celkem <%= stats.mostSpotted.count %> kusů</p>
+                            </div>
+                            <% } %>
+
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <p class="text-gray-500 text-sm mb-3">Počty podle čeledi</p>
+                                    <table class="w-full text-sm">
+                                        <thead class="text-gray-500 border-b">
+                                            <tr>
+                                                <th class="text-left pb-2">Čeleď</th>
+                                                <th class="text-right pb-2">Počet</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% stats.byFamily.forEach(([family, count])=> { %>
+                                                <tr class="border-b last:border-0">
+                                                    <td class="py-2 text-gray-700">
+                                                        <%= family %>
+                                                    </td>
+                                                    <td class="py-2 text-right text-green-600 font-medium">
+                                                        <%= count %>
+                                                    </td>
+                                                </tr>
+                                                <% }) %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                    </div>
                 </div>
 
             </main>

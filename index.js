@@ -11,6 +11,7 @@ import {
   getAllBirdsWithUsers,
   getBirdById,
   getUserByToken,
+  getUserStats,
   toggleBird,
   updateBird,
   updateUserAvatar,
@@ -108,9 +109,11 @@ const sendBirdsToAllWebsockets = async () => {
 
 app.get("/profile", auth, async (c) => {
   const user = c.get("user");
+  const stats = await getUserStats(user.id);
+
   const profile = await ejs.renderFile(
     "src/views/profile.ejs",
-    { title: "Profile", user },
+    { title: "Profile", user, stats },
     { views: ["src/views"] },
   );
   return c.html(profile);

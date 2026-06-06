@@ -121,3 +121,23 @@ export async function getAllBirdsWithUsers() {
     .leftJoin(usersTable, eq(birdsTable.userId, usersTable.id))
     .all();
 }
+
+
+export async function getUserStats(userId) {
+  const birds = await getAllBirds(userId)
+  
+  const totalBirds = birds.length
+  const seenBirds = birds.filter(b => b.seen).length
+  
+  const mostSpotted = birds.reduce((max, b) => 
+    (b.count > (max?.count ?? 0)) ? b : max, null)
+  
+  const byFamily = Object.entries(
+    birds.reduce((acc, b) => {
+      if (b.family) acc[b.family] = (acc[b.family] || 0) + 1
+      return acc
+    }, {})
+  ).sort((a, b) => b[1] - a[1])
+
+  return { totalBirds, seenBirds, mostSpotted, byFamily }
+}
