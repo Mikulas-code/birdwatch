@@ -1,16 +1,30 @@
 <nav class="bg-green-700 text-white px-6 py-4 mb-8">
-    <div class="flex justify-between items-center">
-        <h1 class="text-2xl font-bold">
-            <a href="/">
-                🦅 BirdWatch
-            </a>
-        </h1>
-        <% if (user) { %>
-            <a href="/profile" class="text-white">
-                <%= user.userName %>
-            </a>
-            <% } else { %>
-                <a href="/login" class="text-white">Přihlásit se</a>
-                <% } %>
+  <div class="flex justify-between items-center">
+    
+    <!-- vlevo: logo + navigace -->
+    <div class="flex items-center gap-6">
+      <h1 class="text-2xl font-bold">
+        <a href="/">🦅 BirdWatch</a>
+      </h1>
+      <a href="/" class="hover:text-green-200">Moji ptáci</a>
+      <a href="/comunity" class="hover:text-green-200">Komunita</a>
     </div>
+
+    <!-- vpravo: avatar + jméno -->
+    <% if (user) { %>
+      <a href="/profile" class="flex items-center gap-2 hover:text-green-200">
+        <% if (user.avatarURL) { %>
+          <img src="/<%= user.avatarURL %>" class="w-8 h-8 rounded-full object-cover"/>
+        <% } else { %>
+          <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-sm">
+            🦅
+          </div>
+        <% } %>
+        <%= user.userName %>
+      </a>
+    <% } else { %>
+      <a href="/login" class="hover:text-green-200">Přihlásit se</a>
+    <% } %>
+
+  </div>
 </nav>

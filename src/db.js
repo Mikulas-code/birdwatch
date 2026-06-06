@@ -98,3 +98,20 @@ export async function updateUserAvatar(userId, filePath) {
     .set({ avatarURL: filePath })
     .where(eq(usersTable.id, userId));
 }
+
+
+export async function getAllBirdsWithUsers() {
+  return await db
+    .select({
+      id: birdsTable.id,
+      name: birdsTable.name,
+      latinName: birdsTable.latinName,
+      date: birdsTable.date,
+      seen: birdsTable.seen,
+      imageURL: birdsTable.imageURL,
+      userName: usersTable.userName,
+    })
+    .from(birdsTable)
+    .leftJoin(usersTable, eq(birdsTable.userId, usersTable.id))
+    .all()
+}

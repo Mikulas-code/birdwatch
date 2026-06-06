@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<%- include('partials/head') %>
+
+    <body class="bg-gray-100 min-h-screen">
+        <%- include('partials/navigation') %>
+
+            <main class="max-w-2xl mx-auto px-4">
+                <hr />
+                <% for (const bird of birds) { %>
+                    <div class="bg-white rounded-lg shadow p-4 mb-8 border border-gray-200">
+
+                        <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">
+                            🦅 <%= bird.userName %>
+                        </span>
+                        <h2 class="text-xl font-bold mt-1">
+                            <%= bird.name %>
+                        </h2>
+                        <p class="text-gray-500 italic text-sm">
+                            <%= bird.latinName %>
+                        </p>
+
+                        <% if (bird.imageURL) { %>
+                            <img src="/<%= bird.imageURL %>" class="w-full h-48 object-cover rounded-t-lg mb-3"
+                                onerror="this.style.display='none'" />
+                            <% } %>
+
+                                <hr />
+                                <table class="w-full text-sm mt-2">
+                                    <thead class="bg-gray-50 text-gray-600">
+                                        <tr>
+                                            <th class="text-left p-2">Řád</th>
+                                            <th class="text-left p-2">Čeleď</th>
+                                            <th class="text-left p-2">Datum</th>
+                                            <th class="text-left p-2">Pohlaví</th>
+                                            <th class="text-left p-2">Počet</th>
+                                            <th class="text-left p-2">Stav</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-t">
+                                            <td class="p-2">
+                                                <%= bird.order %>
+                                            </td>
+                                            <td class="p-2">
+                                                <%= bird.family %>
+                                            </td>
+                                            <td class="p-2">
+                                                <%= bird.date %>
+                                            </td>
+                                            <td class="p-2">
+                                                <% if (bird.gender===true) { %>
+                                                    Samec
+                                                    <% } else { %>
+                                                        Samice
+                                                        <% } %>
+                                            </td>
+                                            <td class="p-2">
+                                                <%= bird.count %>
+                                            </td>
+                                            <td class="p-2">
+                                                <% if (bird.seen) { %>
+                                                    <strong>&#10003; Spatřen</strong>
+                                                    <% } else { %>
+                                                        <em>&#8230; Nespatřen</em>
+                                                        <% } %>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                    </div>
+                    <% } %>
+
+            </main>
+    </body>
+
+</html>

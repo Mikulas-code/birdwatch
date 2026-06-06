@@ -7,6 +7,7 @@ import {
   createUser,
   deleteBird,
   getAllBirds,
+  getAllBirdsWithUsers,
   getBirdById,
   getUserByToken,
   toggleBird,
@@ -52,6 +53,19 @@ app.get("/", auth, async (c) => {
   );
   return c.html(index);
 });
+
+//comunity
+app.get("/comunity", auth, async (c) => {
+  const user = c.get("user");
+  const birds = await getAllBirdsWithUsers();
+  const comunity = await ejs.renderFile(
+    "src/views/comunity.ejs",
+    { title: "Birds", birds, user },
+    { views: ["src/views"] },
+  );
+  return c.html(comunity);
+});
+
 
 serve(app, (info) => {
   console.log(`Server listening at http://localhost:${info.port}`);
