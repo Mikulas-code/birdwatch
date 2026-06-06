@@ -5,6 +5,7 @@ export const usersTable = sqliteTable("users", {
   salt: text().notNull(),
   hash: text().notNull(),
   token: text().notNull(),
+  avatarURL: text(),
 })
 
 

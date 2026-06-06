@@ -11,15 +11,21 @@ import {
   getUserByToken,
   toggleBird,
   updateBird,
+  updateUserAvatar,
 } from "./src/db.js";
 
 import { getCookie, setCookie } from "hono/cookie";
+
+import fs from "fs/promises";
 
 import { drizzle } from "drizzle-orm/libsql";
 import { eq } from "drizzle-orm";
 import { birdsTable } from "./src/schema.js";
 import { error, time } from "node:console";
+
+import { serveStatic } from "@hono/node-server/serve-static";
 const app = new Hono();
+app.use("/public/*", serveStatic({ root: "./" }))
 
 app.use(async (c, next) => {
   const token = getCookie(c, "token");
@@ -28,12 +34,12 @@ app.use(async (c, next) => {
 });
 
 const auth = async (c, next) => {
-  const user = c.get("user")
+  const user = c.get("user");
   if (!user) {
-    return c.redirect("/login")
+    return c.redirect("/login");
   }
-  await next()
-}
+  await next();
+};
 
 // Homepage
 app.get("/", auth, async (c) => {
@@ -51,17 +57,15 @@ serve(app, (info) => {
   console.log(`Server listening at http://localhost:${info.port}`);
 });
 
-app.get("/profile", auth, async (c)=>{
+app.get("/profile", auth, async (c) => {
   const user = c.get("user");
   const profile = await ejs.renderFile(
     "src/views/profile.ejs",
-    { title: "Profile", user},
-    {views: ["src/views"]},
+    { title: "Profile", user },
+    { views: ["src/views"] },
   );
   return c.html(profile);
-})
-
-
+});
 
 // pridavani ptaku
 app.post("/add-bird", auth, async (c) => {
@@ -111,7 +115,7 @@ app.get("/open-edit/:id", auth, async (c) => {
 });
 
 // save changes
-app.post("/save-changes/:id", auth ,async (c) => {
+app.post("/save-changes/:id", auth, async (c) => {
   const body = await c.req.formData();
   const id = Number(c.req.param("id"));
   await updateBird(id, {
@@ -182,6 +186,26 @@ app.post("/login-user", async (c) => {
 });
 
 app.get("/logout", async (c) => {
-  setCookie(c, "token", "")
-  return c.redirect("/login")
-})
+  setCookie(c, "token", "");
+  return c.redirect("/login");
+});
+
+app.post("/upload-avatar", auth, async (c) => {
+  const body = await c.req.parseBody();
+  const file = body["avatar"];
+  const user = c.get("user");
+
+  // unikátní název souboru aby se nepřepisovaly
+  const fileName = `${Date.now()}_${file.name}`;
+  const filePath = `public/uploads/${fileName}`;
+
+  // převedeme File na buffer a zapíšeme na disk
+  const arrayBuffer = await file.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+
+  await fs.writeFile(filePath, buffer);
+
+  await updateUserAvatar(user.id, filePath);
+
+  return c.redirect("/profile");
+});
