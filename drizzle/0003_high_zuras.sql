@@ -1,0 +1,1 @@
+ALTER TABLE `birds` ADD `audioURL` text;

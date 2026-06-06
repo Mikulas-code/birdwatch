@@ -47,27 +47,47 @@ const auth = async (c, next) => {
 
 // Homepage
 app.get("/", auth, async (c) => {
-  const user = c.get("user");
-  const birds = await getAllBirds(user.id);
+  const user = c.get("user")
+  const filters = {
+    seen: c.req.query("seen"),
+    family: c.req.query("family"),
+    order: c.req.query("order"),
+  }
+  const birds = await getAllBirds(user.id, filters)
+  
+  // pro selecty načteme všechny ptáky bez filtru
+  const allBirds = await getAllBirds(user.id, {})
+  const families = [...new Set(allBirds.map(b => b.family).filter(Boolean))]
+  const orders = [...new Set(allBirds.map(b => b.order).filter(Boolean))]
+
   const index = await ejs.renderFile(
     "src/views/index.ejs",
-    { title: "Birds", birds, user },
+    { title: "Birds", birds, user, filters, families, orders },
     { views: ["src/views"] },
-  );
-  return c.html(index);
-});
-
+  )
+  return c.html(index)
+})
 //community
 app.get("/community", auth, async (c) => {
-  const user = c.get("user");
-  const birds = await getAllBirdsWithUsers();
+  const user = c.get("user")
+  const filters = {
+    seen: c.req.query("seen"),
+    family: c.req.query("family"),
+    order: c.req.query("order"),
+  }
+  const birds = await getAllBirdsWithUsers(filters)
+  
+  const allBirds = await getAllBirdsWithUsers({})
+  const families = [...new Set(allBirds.map(b => b.family).filter(Boolean))]
+  const orders = [...new Set(allBirds.map(b => b.order).filter(Boolean))]
+
   const community = await ejs.renderFile(
     "src/views/community.ejs",
-    { title: "Birds", birds, user },
+    { title: "Birds", birds, user, filters, families, orders },
     { views: ["src/views"] },
-  );
-  return c.html(community);
-});
+  )
+  return c.html(community)
+})
 
 const server = serve(app, (info) => {
   console.log(`Server listening at http://localhost:${info.port}`);

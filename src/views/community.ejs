@@ -6,13 +6,68 @@
     <body class="bg-gray-100 min-h-screen">
         <%- include('partials/navigation') %>
 
-            <main class="max-w-2xl mx-auto px-4">
-                <input type="text" id="search" placeholder="Hledat podle názvu..."
-                    class="w-full border border-gray-300 rounded px-3 py-2 mb-4 text-sm" />
-                <hr />
-                <div id="birds">
-                    <%- include('_community_birds') %>
+            <main class="max-w-5xl mx-auto px-4 flex gap-6">
 
+
+
+                <!-- LEVÝ PANEL - filtry -->
+                <div class="w-64 flex-shrink-0 self-start">
+                    <form method="get" action="/community"
+                        class="bg-white rounded-lg shadow p-4 border border-gray-200 flex flex-col gap-3">
+                        <h3 class="font-semibold text-gray-700">Filtry</h3>
+
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Stav</label>
+                            <select name="seen" class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm">
+                                <option value="">Vše</option>
+                                <option value="true" <%=filters.seen==='true' ? 'selected' : '' %>>Spatřen</option>
+                                <option value="false" <%=filters.seen==='false' ? 'selected' : '' %>>Nespatřen</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Čeleď</label>
+                            <select name="family" class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm">
+                                <option value="">Všechny</option>
+                                <% families.forEach(family=> { %>
+                                    <option value="<%= family %>" <%=filters.family===family ? 'selected' : '' %>>
+                                        <%= family %>
+                                    </option>
+                                    <% }) %>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Řád</label>
+                            <select name="order" class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm">
+                                <option value="">Všechny</option>
+                                <% orders.forEach(order=> { %>
+                                    <option value="<%= order %>" <%=filters.order===order ? 'selected' : '' %>>
+                                        <%= order %>
+                                    </option>
+                                    <% }) %>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                            Filtrovat
+                        </button>
+                        <a href="/community" class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 text-center">
+                            Reset
+                        </a>
+                    </form>
+                </div>
+
+
+
+
+                <div class="flex-1">
+                    <input type="text" id="search" placeholder="Hledat podle názvu..."
+                        class="w-full border border-gray-300 rounded px-3 py-2 mb-4 text-sm" />
+                    <hr />
+                    <div id="birds">
+                        <%- include('_community_birds') %>
+
+                    </div>
                 </div>
 
 

@@ -24,5 +24,6 @@ export const birdsTable = sqliteTable("birds", {
   imageURL: text(),
   lat: text(),
   lng: text(),
+  audioURL: text(),
   userId: int().references(() => usersTable.id),
 })

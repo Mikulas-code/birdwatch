@@ -1,5 +1,5 @@
 import { drizzle } from "drizzle-orm/libsql";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import crypto from "crypto";
 import { birdsTable, usersTable } from "./schema.js";
 
@@ -12,14 +12,20 @@ export async function addBird(data) {
   await db.insert(birdsTable).values(data);
 }
 
-export async function getAllBirds(userId) {
+export async function getAllBirds(userId, filters = {}) {
+  const conditions = [eq(birdsTable.userId, userId)];
+
+  if (filters.seen === "true") conditions.push(eq(birdsTable.seen, true));
+  if (filters.seen === "false") conditions.push(eq(birdsTable.seen, false));
+  if (filters.family) conditions.push(eq(birdsTable.family, filters.family));
+  if (filters.order) conditions.push(eq(birdsTable.order, filters.order));
+
   return await db
     .select()
     .from(birdsTable)
-    .where(eq(birdsTable.userId, userId))
+    .where(and(...conditions))
     .all();
 }
-
 export async function deleteBird(id) {
   await db.delete(birdsTable).where(eq(birdsTable.id, id));
 }
@@ -106,7 +112,13 @@ export async function updateUserAvatar(userId, filePath) {
     .where(eq(usersTable.id, userId));
 }
 
-export async function getAllBirdsWithUsers() {
+export async function getAllBirdsWithUsers(filters = {}) {
+  const conditions = [];
+  if (filters.seen === "true") conditions.push(eq(birdsTable.seen, true));
+  if (filters.seen === "false") conditions.push(eq(birdsTable.seen, false));
+  if (filters.family) conditions.push(eq(birdsTable.family, filters.family));
+  if (filters.order) conditions.push(eq(birdsTable.order, filters.order));
+
   return await db
     .select({
       id: birdsTable.id,
@@ -115,29 +127,33 @@ export async function getAllBirdsWithUsers() {
       date: birdsTable.date,
       seen: birdsTable.seen,
       imageURL: birdsTable.imageURL,
+      family: birdsTable.family, // ← přidej
+      order: birdsTable.order, // ← přidej
       userName: usersTable.userName,
     })
     .from(birdsTable)
     .leftJoin(usersTable, eq(birdsTable.userId, usersTable.id))
+    .where(conditions.length > 0 ? and(...conditions) : undefined)
     .all();
 }
 
-
 export async function getUserStats(userId) {
-  const birds = await getAllBirds(userId)
-  
-  const totalBirds = birds.length
-  const seenBirds = birds.filter(b => b.seen).length
-  
-  const mostSpotted = birds.reduce((max, b) => 
-    (b.count > (max?.count ?? 0)) ? b : max, null)
-  
+  const birds = await getAllBirds(userId);
+
+  const totalBirds = birds.length;
+  const seenBirds = birds.filter((b) => b.seen).length;
+
+  const mostSpotted = birds.reduce(
+    (max, b) => (b.count > (max?.count ?? 0) ? b : max),
+    null,
+  );
+
   const byFamily = Object.entries(
     birds.reduce((acc, b) => {
-      if (b.family) acc[b.family] = (acc[b.family] || 0) + 1
-      return acc
-    }, {})
-  ).sort((a, b) => b[1] - a[1])
+      if (b.family) acc[b.family] = (acc[b.family] || 0) + 1;
+      return acc;
+    }, {}),
+  ).sort((a, b) => b[1] - a[1]);
 
-  return { totalBirds, seenBirds, mostSpotted, byFamily }
+  return { totalBirds, seenBirds, mostSpotted, byFamily };
 }
