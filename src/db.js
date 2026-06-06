@@ -12,8 +12,8 @@ export async function addBird(data) {
   await db.insert(birdsTable).values(data);
 }
 
-export async function getAllBirds() {
-  return await db.select().from(birdsTable).all();
+export async function getAllBirds(userId) {
+  return await db.select().from(birdsTable).where(eq(birdsTable.userId, userId)).all()
 }
 
 export async function deleteBird(id) {

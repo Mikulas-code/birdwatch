@@ -43,8 +43,8 @@ const auth = async (c, next) => {
 
 // Homepage
 app.get("/", auth, async (c) => {
-  const birds = await getAllBirds();
   const user = c.get("user");
+  const birds = await getAllBirds(user.id);
   const index = await ejs.renderFile(
     "src/views/index.ejs",
     { title: "Birds", birds, user },
