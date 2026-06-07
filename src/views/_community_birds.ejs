@@ -59,6 +59,18 @@
                         </tr>
                     </tbody>
                 </table>
+                <% if (bird.audioURL) { %>
+                    <audio controls class="w-full mt-2">
+                        <source src="/<%= bird.audioURL %>" type="audio/mpeg" />
+                    </audio>
+                    <% } %>
+
+                        <div class="flex gap-2 mt-2">
+                            <a href="/open-edit/<%= bird.id %>"
+                                class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
+                                Detail
+                            </a>
+                        </div>
 
     </div>
     <% } %>

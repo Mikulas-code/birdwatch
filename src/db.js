@@ -135,6 +135,7 @@ export async function getAllBirdsWithUsers(filters = {}) {
       userName: usersTable.userName,
       gender: birdsTable.gender,
       count: birdsTable.count,
+      audioURL: birdsTable.audioURL,
     })
     .from(birdsTable)
     .leftJoin(usersTable, eq(birdsTable.userId, usersTable.id))

@@ -21,7 +21,8 @@
                 </div>
                 <% } %>
                   <label class="text-sm font-medium text-gray-700 w-full">Změnit fotografii</label>
-                  <input type="file" name="image" accept="image/*" class="w-full text-sm" />
+                  <input <%=!isOwner ? 'disabled' : '' %> type="file" name="image" accept="image/*" class="w-full
+                  text-sm" />
 
                   <% if (bird.lat && bird.lng) { %>
                     <div id="map" class="w-full rounded-lg mt-2" style="height: 400px;"></div>
@@ -31,15 +32,16 @@
                     <script>
                       const map = L.map('map').setView([Number('<%= bird.lat %>'), Number('<%= bird.lng %>')], 13)
                       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
-
                       let marker = L.marker([Number('<%= bird.lat %>'), Number('<%= bird.lng %>')]).addTo(map)
 
-                      map.on('click', (e) => {
-                        const { lat, lng } = e.latlng
-                        marker.setLatLng([lat, lng])
-                        document.getElementById('lat').value = lat
-                        document.getElementById('lng').value = lng
-                      })
+                        <% if (isOwner) { %>
+                          map.on('click', (e) => {
+                            const { lat, lng } = e.latlng
+                            marker.setLatLng([lat, lng])
+                            document.getElementById('lat').value = lat
+                            document.getElementById('lng').value = lng
+                          })
+                          <% } %>
                     </script>
                     <% } %>
 
@@ -52,49 +54,49 @@
 
             <div>
               <label class="text-sm font-medium text-gray-700">Název ptáka</label>
-              <input name="name" value="<%= bird.name %>"
+              <input <%=!isOwner ? 'disabled' : '' %> name="name" value="<%= bird.name %>"
                 class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
             </div>
             <div>
               <label class="text-sm font-medium text-gray-700">Latinský název</label>
-              <input name="latinName" value="<%= bird.latinName %>"
+              <input <%=!isOwner ? 'disabled' : '' %> name="latinName" value="<%= bird.latinName %>"
                 class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
             </div>
             <div>
               <label class="text-sm font-medium text-gray-700">Řád</label>
-              <input name="order" value="<%= bird.order %>"
+              <input <%=!isOwner ? 'disabled' : '' %> name="order" value="<%= bird.order %>"
                 class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
             </div>
             <div>
               <label class="text-sm font-medium text-gray-700">Čeleď</label>
-              <input name="family" value="<%= bird.family %>"
+              <input <%=!isOwner ? 'disabled' : '' %> name="family" value="<%= bird.family %>"
                 class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
             </div>
             <div>
               <label class="text-sm font-medium text-gray-700">Datum</label>
-              <input type="date" name="date" value="<%= bird.date %>"
+              <input <%=!isOwner ? 'disabled' : '' %> type="date" name="date" value="<%= bird.date %>"
                 class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
             </div>
             <div>
               <label class="text-sm font-medium text-gray-700">Počet</label>
-              <input name="count" value="<%= bird.count %>"
+              <input <%=!isOwner ? 'disabled' : '' %> name="count" value="<%= bird.count %>"
                 class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
             </div>
             <div>
               <label class="text-sm font-medium text-gray-700">Poznámky</label>
-              <input name="notes" value="<%= bird.notes %>"
+              <input <%=!isOwner ? 'disabled' : '' %> name="notes" value="<%= bird.notes %>"
                 class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm" />
             </div>
             <div>
               <label class="text-sm font-medium text-gray-700">Stav</label>
-              <select name="seen" class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm">
+              <select <%=!isOwner ? 'disabled' : '' %> name="seen" class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm">
                 <option value="true" <%=bird.seen ? 'selected' : '' %>>Spatřen</option>
                 <option value="false" <%=!bird.seen ? 'selected' : '' %>>Nespatřen</option>
               </select>
             </div>
             <div>
               <label class="text-sm font-medium text-gray-700">Pohlaví</label>
-              <select name="gender" class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm">
+              <select <%=!isOwner ? 'disabled' : '' %> name="gender" class="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-sm">
                 <option value="true" <%=bird.gender ? 'selected' : '' %>>Samec</option>
                 <option value="false" <%=!bird.gender ? 'selected' : '' %>>Samice</option>
               </select>
@@ -108,20 +110,39 @@
               <% } %>
                 <div>
                   <label class="text-sm font-medium text-gray-700">Nahrávka zpěvu (MP3)</label>
-                  <input type="file" name="audio" accept="audio/*" class="w-full mt-1 text-sm" />
+                  <input <%=!isOwner ? 'disabled' : '' %> type="file" name="audio" accept="audio/*" class="w-full mt-1
+                  text-sm" />
                 </div>
                 <div class="flex gap-2 mt-2">
-                  <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-                    Uložit
-                  </button>
-                  <a href="/" class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">
-                    Zrušit
-                  </a>
+                  <% if (isOwner) { %>
+                    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                      Uložit
+                    </button>
+                    <a href="/" class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">
+                      Zrušit
+                    </a>
+                    <% } else { %>
+                      <a href="/community" class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">
+                        ← Zpět
+                      </a>
+                      <% } %>
                 </div>
           </div>
 
         </form>
       </main>
+
+      <% if (!isOwner) { %>
+        <script>
+  const ws = new WebSocket('ws://localhost:3000/ws')
+          ws.addEventListener('message', (message) => {
+            const json = JSON.parse(message.data)
+            if (json.type === 'birds') {
+              window.location.reload()
+            }
+          })
+        </script>
+        <% } %>
   </body>
 
 </html>

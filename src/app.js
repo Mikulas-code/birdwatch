@@ -175,6 +175,11 @@ app.post("/add-bird", auth, async (c) => {
 // mazani ptaku
 app.post("/remove-bird/:id", auth, async (c) => {
   const id = Number(c.req.param("id"));
+  const user = c.get("user");
+  const bird = await getBirdById(id);
+  if (!bird) return c.notFound();
+  if (bird.userId !== user.id) return c.redirect("/");
+
   await deleteBird(id);
   return c.redirect("/");
 });
@@ -182,6 +187,11 @@ app.post("/remove-bird/:id", auth, async (c) => {
 // zmena stavu
 app.post("/toggle-bird/:id", auth, async (c) => {
   const id = Number(c.req.param("id"));
+  const user = c.get("user");
+  const bird = await getBirdById(id);
+  if (!bird) return c.notFound();
+  if (bird.userId !== user.id) return c.redirect("/");
+
   await toggleBird(id);
   sendBirdsToAllWebsockets();
   return c.redirect("/");
@@ -193,9 +203,12 @@ app.get("/open-edit/:id", auth, async (c) => {
   const user = c.get("user");
   const bird = await getBirdById(id);
   if (!bird) return c.notFound();
+
+  const isOwner = bird.userId === user.id;
+
   const edit = await ejs.renderFile(
     "src/views/edit.ejs",
-    { title: "Edit " + bird.name, bird, user },
+    { title: "Edit " + bird.name, bird, user, isOwner },
     { views: ["src/views"] },
   );
   return c.html(edit);
@@ -205,12 +218,16 @@ app.get("/open-edit/:id", auth, async (c) => {
 app.post("/save-changes/:id", auth, async (c) => {
   const body = await c.req.parseBody();
   const id = Number(c.req.param("id"));
+  const user = c.get("user");
 
   const file = body["image"];
   const audioFile = body["audio"];
   let imageURL = null;
   let audioURL = null;
   const bird = await getBirdById(id);
+
+  if (!bird) return c.notFound();
+  if (bird.userId !== user.id) return c.redirect("/community");
 
   if (file && file.size > 0) {
     // smaž starý jen když nahrávám nový
@@ -248,7 +265,7 @@ app.post("/save-changes/:id", auth, async (c) => {
     ...(imageURL && { imageURL }),
     ...(audioURL && { audioURL }),
   });
-  sendBirdsToAllWebsockets()
+  sendBirdsToAllWebsockets();
   return c.redirect(`/open-edit/${id}`);
 });
 
