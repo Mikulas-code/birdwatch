@@ -29,7 +29,7 @@ BirdWatch is a full-stack web application that allows users to log birds they ha
 - WebSockets via @hono/node-ws
 - Leaflet (maps)
 - Tailwind CSS via CDN (styling)
-- AVA (unit tests)
+- AVA (unit tests + Hono integration tests)
 
 ## Architecture
 
