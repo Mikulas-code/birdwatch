@@ -60,12 +60,25 @@ npm test
 ```
 
 ## Screenshots
+### Homepage
 ![Birdwatch - Homepage](image.png)
+
+### Adding new bird
 ![Birdwatch - Adding new bird1](image-1.png)
 ![Birdwatch - Adding new bird2](image-2.png)
+
+### Bird detail
 ![Birdwatch - Bird detail2](image-3.png)
 ![Birdwatch - Bird detail2](image-4.png)
+
+### Profile page
 ![Birdwatch - Profile page](image-5.png)
+
+### Comunity page
 ![Birdwatch - Comunity page](image-6.png)
+
+### Login page
 ![Birdwatch - Login page](image-7.png)
+
+### Register page
 ![Birdwatch - Register page](image-8.png)
