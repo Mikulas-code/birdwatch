@@ -222,15 +222,17 @@ app.post("/save-changes/:id", auth, async (c) => {
 
   const file = body["image"];
   const audioFile = body["audio"];
-  let imageURL = null;
-  let audioURL = null;
+  let imageURL = undefined;
+  let audioURL = undefined;
   const bird = await getBirdById(id);
 
   if (!bird) return c.notFound();
   if (bird.userId !== user.id) return c.redirect("/community");
 
-  if (file && file.size > 0) {
-    // smaž starý jen když nahrávám nový
+  if (body["removeImage"] === "true" && bird.imageURL) {
+    await fs.unlink(bird.imageURL).catch(() => {});
+    imageURL = null;
+  } else if (file && file.size > 0) {
     if (bird.imageURL) {
       await fs.unlink(bird.imageURL).catch(() => {});
     }
@@ -240,8 +242,10 @@ app.post("/save-changes/:id", auth, async (c) => {
     imageURL = filePath;
   }
 
-  if (audioFile && audioFile.size > 0) {
-    // smaž starý jen když nahrávám nový
+  if (body["removeAudio"] === "true" && bird.audioURL) {
+    await fs.unlink(bird.audioURL).catch(() => {});
+    audioURL = null;
+  } else if (audioFile && audioFile.size > 0) {
     if (bird.audioURL) {
       await fs.unlink(bird.audioURL).catch(() => {});
     }
@@ -262,8 +266,8 @@ app.post("/save-changes/:id", auth, async (c) => {
     notes: body["notes"],
     count: body["count"],
     seen: body["seen"] === "true",
-    ...(imageURL && { imageURL }),
-    ...(audioURL && { audioURL }),
+    ...(imageURL !== undefined && { imageURL }),
+    ...(audioURL !== undefined && { audioURL }),
   });
   sendBirdsToAllWebsockets();
   return c.redirect(`/open-edit/${id}`);
