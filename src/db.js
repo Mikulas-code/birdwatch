@@ -130,9 +130,11 @@ export async function getAllBirdsWithUsers(filters = {}) {
       date: birdsTable.date,
       seen: birdsTable.seen,
       imageURL: birdsTable.imageURL,
-      family: birdsTable.family, // ← přidej
-      order: birdsTable.order, // ← přidej
+      family: birdsTable.family,
+      order: birdsTable.order,
       userName: usersTable.userName,
+      gender: birdsTable.gender,
+      count: birdsTable.count,
     })
     .from(birdsTable)
     .leftJoin(usersTable, eq(birdsTable.userId, usersTable.id))
