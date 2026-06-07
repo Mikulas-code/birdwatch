@@ -1,10 +1,12 @@
 import test from "ava"
 import { createUser, authenticateUser, db } from "../src/db.js"
-import { usersTable } from "../src/schema.js"
+import { usersTable, birdsTable } from "../src/schema.js"
 
 test.before(async () => {
+  await db.delete(birdsTable) 
   await db.delete(usersTable)
 })
+
 test.serial("createUser vytvoří uživatele", async (t) => {
   const user = await createUser("testuser", "heslo123")
   t.truthy(user)

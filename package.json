@@ -38,6 +38,7 @@
   },
   "ava": {
     "timeout": "30s",
+    "serial": true,
     "environmentVariables": {
       "DB_PATH": "file:test.sqlite"
     }
